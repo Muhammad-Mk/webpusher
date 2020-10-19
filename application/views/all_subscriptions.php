@@ -5,7 +5,7 @@
             <h1>All Subscriptions</h1>
         </div>
         <div class="col-4 text-right">
-            <button class="btn btn-primary" onclick="sendNotificationToAll('<?= $site_id ?>')">Send To All</button>
+            <button class="btn btn-primary" onclick="send_push_notification('<?= $site_id ?>')">Send To All</button>
         </div>
     </div>
     
@@ -44,28 +44,19 @@
         $('#subscription_table').DataTable();
     });
 
-    function sendNotificationToAll(site_id){
-        console.log("sendNotificationToAll site_id: ", site_id)
-        $.ajax({
-            type: "post",
-            url: "<?= base_url() . 'api/send-subscription' ?>",
-            data: {site_id: site_id},
-            cache: false,
-            success: function(result){
-                console.log("result: ", result)
-            },
-            error: function(error_result){
-                console.log("error_result: ", error_result)
-            }
-        });
-    }
-    function send_push_notification(site_id, subscription_id){
+    function send_push_notification(site_id, subscription_id=''){
         console.log("site_id: ", site_id)
         console.log("subscription_id: ", subscription_id)
+        if(subscription_id != ''){
+            var data_to_send = {site_id: site_id, subscription_id: subscription_id, campaign_title: 'Practice campaign'};
+        }
+        else{
+            var data_to_send = {site_id: site_id, campaign_title: 'Practice campaign'};
+        }
         $.ajax({
             type: "post",
             url: "<?= base_url() . 'api/send-subscription' ?>",
-            data: {site_id: site_id, subscription_id: subscription_id},
+            data: data_to_send,
             cache: false,
             success: function(result){
                 console.log("result: ", result)

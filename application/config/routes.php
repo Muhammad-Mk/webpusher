@@ -55,8 +55,9 @@ $route['test-route'] = 'Welcome/test_route';
 $route['subscriptions/(:any)'] = 'SubscriptionController/getAllSubscriptions/$1';
 
 $route['api/save-subscription'] = 'SubscriptionController/save';
-$route['api/send-subscription'] = 'SubscriptionController/pushNotification';
+$route['api/send-subscription'] = 'SubscriptionController/sendPushNotification';
 $route['api/custom-prompt'] = 'CustomPromptController/postCustomPromptDetail';
+$route['api/update-campain-status'] = 'SubscriptionController/updateSubscriptionCampainRecord';
 
 
 $route['sites'] = 'SiteRegistrationController/getAllSites';

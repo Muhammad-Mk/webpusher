@@ -32,7 +32,7 @@ class Subscription_modal extends CI_Model{
     }
 
     public function allSubscription($site_id){
-        $all_subscriptions = $this->db->select("*")->from("subscriptions")->where(['site_id' => $site_id, 'is_deleted' => 0])->get();        
+        $all_subscriptions = $this->db->select("*")->from("subscriptions")->where(['site_id' => $site_id, 'is_deleted' => 0])->order_by('id', 'DESC')->get();        
         return $all_subscriptions->result();
     }
 
@@ -48,6 +48,15 @@ class Subscription_modal extends CI_Model{
         return $subscription_detail->result();
     }
 
+    public function getCampainIdAfterSavingCampain($data){
+        $data_to_save = ['site_id' => $data['site_id'], 'campaign_title' => $data['campaign_title']];
+        $result =  $this->db->insert('campaigns', $data_to_save);
+        if($result){
+            return $this->db->insert_id();
+        }
+        return false;
+    }
+
     public function saveFailToSentSubscriptions($not_sent_subsriptions_records){
         $result =  $this->db->insert_batch('subscriptions_sent_fail', $not_sent_subsriptions_records);
         if($result){
@@ -59,6 +68,30 @@ class Subscription_modal extends CI_Model{
     public function markSubscriptionsAsDelete($not_sent_subsriptions_records){
         $query = $this->db->where_in('endpoint',$not_sent_subsriptions_records)->update('subscriptions', ['is_deleted' => 1]);
         return $query;
+    }
+
+    public function createSubscriptionCampain($campain_data){
+        $result =  $this->db->insert('subscription_campaign', $campain_data);
+        if($result){
+            return true;
+        }
+        return false;
+    }
+
+    public function updateSubscriptionCampain($campain_data){
+        $status_to_update='';
+        if($campain_data['event'] == 0){
+            $status_to_update = 'delivered_to';
+        }
+        else if($campain_data['event'] == 1){
+            $status_to_update = 'closed';
+        }
+        else if($campain_data['event'] == 2){
+            $status_to_update = 'clicks';
+        }
+        $sql = "UPDATE subscription_campaign SET ".$status_to_update." = (SELECT SUM(".$status_to_update." + 1) as delivered_to FROM subscription_campaign WHERE campaign_id=".$campain_data['campaign_id'].") WHERE campaign_id=".$campain_data['campaign_id'].";";
+        $query_result = $this->db->query($sql);
+        return $query_result;
     }
 }
 ?>

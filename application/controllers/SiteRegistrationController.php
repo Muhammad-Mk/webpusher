@@ -8,6 +8,7 @@ class SiteRegistrationController extends CI_Controller {
 	public function __construct(){
         parent::__construct();
         $this->load->model('SiteRegistration_modal');
+        $this->load->model('CustomPrompt_modal');
     }
 
     public function getAllSites(){
@@ -40,6 +41,22 @@ class SiteRegistrationController extends CI_Controller {
         $post_data['private_key'] = $vapid_keys['privateKey'];
         $result_response = $this->SiteRegistration_modal->saveSite($post_data);
 		if($result_response){
+
+            // $url = (isset($_SERVER['HTTPS']) ? 'https://' : 'http://').$_SERVER['SERVER_NAME'];
+            $url = (isset($_SERVER['HTTPS']) ? "https" : "http") . "://$_SERVER[HTTP_HOST]";
+            $data_to_create_site_custom_prompt = Array ( 
+                'site_id' => $result_response['site_id'],
+                'prompt_title' => 'title',
+                'prompt_detail' => 'custom prompt title detail repeat custom prompt title detail repeat',
+                'prompt_url' => $url,
+                'prompt_delay' => 3,
+                'prompt_enable' => 'YES',
+                'prompt_disable' => 'NO',
+                'prompt_icon' => 'https://freeiconshop.com/wp-content/uploads/edd/home-flat.png'
+            );
+            $this->CustomPrompt_modal->saveCustomPrompt($data_to_create_site_custom_prompt);
+
+
             $webpushr_url = base_url() . "web-push.js";
             $resulted_script = "<textarea class='form-control' rows='7' readonly>
             <script>

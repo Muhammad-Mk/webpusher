@@ -37,7 +37,7 @@ class CustomPrompt_modal extends CI_Model{
     }
 
     public function getCustomPromptDetailAgainstSiteKey($public_key){
-        $custom_prompt_detail = $this->db->select("custom_prompts.*")->from("sites")
+        $custom_prompt_detail = $this->db->select("custom_prompts.*, sites.site_url")->from("sites")
                                     ->join('custom_prompts', 'sites.id = custom_prompts.site_id')
                                     ->where('sites.public_key', $public_key)->get();        
         return $custom_prompt_detail->result();

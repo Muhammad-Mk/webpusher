@@ -29,62 +29,14 @@ class SubscriptionController extends CI_Controller {
 		}
 	}
 
-	public function pushNotification(){
+	public function sendPushNotification(){
 		$received_data = $this->security->xss_clean($this->input->post());
+		$campaign_id = $this->Subscription_modal->getCampainIdAfterSavingCampain($received_data);
 		$subscription_detail = $this->Subscription_modal->getSpecificSubscription($received_data);
-		// print_r($subscription_detail); return;
 		
 		if(empty($subscription_detail)){
 			return json_encode(array('status' => 'FALSE', 'message' => 'No Subscription Detail found'));
 		}
-
-		/*
-			$site_id = $subscription_detail[0]->site_id;
-			$endpoint = $subscription_detail[0]->endpoint;
-			$p256dh = $subscription_detail[0]->p256dh;
-			$auth = $subscription_detail[0]->auth;
-			$expirationTime = $subscription_detail[0]->expirationTime;
-
-			$public_key = $subscription_detail[0]->public_key;
-			$private_key = $subscription_detail[0]->private_key;
-			$vapidKeys = [
-				'publicKey' => $public_key,
-				'privateKey' => $private_key
-			];
-			
-			$subscription_data = [
-				// 'contentEncoding' => "aes128gcm",
-				'endpoint' => $endpoint,
-				'expirationTime' => $expirationTime,
-				'keys' => [
-					'auth' => $auth,
-					'p256dh' => $p256dh
-				]
-			];
-			$subscription = Subscription::create($subscription_data);
-			$auth = [
-				'VAPID' => [
-					'subject' => 'muhammad.mk5698@gmail.com',
-					'publicKey' => $public_key,
-					'privateKey' => $private_key
-				],
-			];
-			
-			$webPush = new WebPush($auth);
-			$report = $webPush->sendOneNotification(
-				$subscription,
-				"Hello! 👋"
-			);
-			// handle eventual errors here, and remove the subscription from your server if it is expired
-			$endpoint = $report->getRequest()->getUri()->__toString();
-			if ($report->isSuccess()) {
-				echo "[v] Message sent successfully for subscription {$endpoint}.";
-			} else {
-				echo "[x] Message failed to sent for subscription {$endpoint}: {$report->getReason()}";
-			}
-			return;
-		*/
-
 
 		$auth = [
 			'VAPID' => [
@@ -113,9 +65,17 @@ class SubscriptionController extends CI_Controller {
 				]
 			];
 
+			$notification_data = [
+				"title" => "WebPush Notification From Server", 
+				"message" => "Hello From server! 👋", 
+				"link" => "https://www.google.com", 
+				"icon" => "https://freeiconshop.com/wp-content/uploads/edd/home-flat.png", 
+				'campaign_id' => $campaign_id
+			];
+
 			$temp_notifications = [
 				'subscription' => Subscription::create($subscription_data),
-				'payload' => "Hello! 👋",
+				'payload' => json_encode($notification_data),
 			];
 			$notifications[] = $temp_notifications;
 		}
@@ -158,10 +118,25 @@ class SubscriptionController extends CI_Controller {
 			echo "failReason: "; print_r($failReason); echo "<br>";
 			echo "isTheEndpointWrongOrExpired: "; print_r($isTheEndpointWrongOrExpired); echo "<br>";*/
 		}
-		print_r($this->Subscription_modal->saveFailToSentSubscriptions($not_sent_end_points_detail));
-		print_r($this->Subscription_modal->markSubscriptionsAsDelete($not_sent_end_points));
+		// print_r($this->Subscription_modal->saveFailToSentSubscriptions($not_sent_end_points_detail));
+		// print_r($this->Subscription_modal->markSubscriptionsAsDelete($not_sent_end_points));
 		// print_r($not_sent_end_points);
 
+		
+		$campain_detail = [
+			'site_id' => $received_data['site_id'],
+			'campaign_id' => $campaign_id,
+			'subscribers' => count($subscription_detail),
+			'sent_to' => count($sent_end_points),
+			'fail_to_sent' => count($not_sent_end_points),
+		];
+		$campain = $this->Subscription_modal->createSubscriptionCampain($campain_detail);
+		echo "campain: " . $campain;
 	}
 
+	public function updateSubscriptionCampainRecord(){
+		$campain_data_to_update = json_decode(trim(file_get_contents('php://input')), true);
+		$campain = $this->Subscription_modal->updateSubscriptionCampain($campain_data_to_update);
+		echo json_encode(array('status' => $campain));
+	}
 }
