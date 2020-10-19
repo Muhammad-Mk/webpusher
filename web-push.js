@@ -93,8 +93,8 @@
             });
         },
         getCutomPrompt: function(){
-            console.log("call getCutomPrompt")
-            return fetch("http://localhost/webpushr/api/custom-prompt", {
+            // return fetch("http://localhost/webpushr/api/custom-prompt", {
+            return fetch("https://www.browserpushnotifications.com/api/custom-prompt", {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({site_key: _.projectId})
@@ -197,11 +197,11 @@
         sendSubscriptionToBackEnd: function(subscription) {
             console.log("call sendSubscriptionToBackEnd: ", subscription);
             subscription = JSON.parse(subscription);
-            console.log("after parse: ",subscription )
             subscription['site_key'] = _.projectId;
 
             console.log("obj new: ", JSON.stringify(subscription));
-            return fetch("http://localhost/webpushr/api/save-subscription", {
+            // return fetch("http://localhost/webpushr/api/save-subscription", {
+            return fetch("https://www.browserpushnotifications.com/api/save-subscription", {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({subscription: subscription, site_key: _.projectId})

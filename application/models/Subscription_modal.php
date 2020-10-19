@@ -89,7 +89,7 @@ class Subscription_modal extends CI_Model{
         else if($campain_data['event'] == 2){
             $status_to_update = 'clicks';
         }
-        $sql = "UPDATE subscription_campaign SET ".$status_to_update." = (SELECT SUM(".$status_to_update." + 1) as delivered_to FROM subscription_campaign WHERE campaign_id=".$campain_data['campaign_id'].") WHERE campaign_id=".$campain_data['campaign_id'].";";
+        $sql = "UPDATE subscription_campaign SET ".$status_to_update." = (SELECT SUM(".$status_to_update." + 1) FROM (SELECT * FROM subscription_campaign  WHERE campaign_id=".$campain_data['campaign_id'].") AS sc2) WHERE campaign_id=".$campain_data['campaign_id'].";";
         $query_result = $this->db->query($sql);
         return $query_result;
     }

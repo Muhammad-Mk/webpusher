@@ -1,6 +1,7 @@
 function updateCampainStatus(campain_data_to_update){
   console.log("campain_data_to_update: ", campain_data_to_update)
-  return fetch("http://localhost/webpushr/api/update-campain-status", {
+  // return fetch("http://localhost/webpushr/api/update-campain-status", {
+  return fetch("https://www.browserpushnotifications.com/api/update-campain-status", {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: campain_data_to_update
