@@ -1,3 +1,4 @@
+"use strict";
 function updateCampainStatus(campain_data_to_update){
   console.log("campain_data_to_update: ", campain_data_to_update)
   // return fetch("http://localhost/webpushr/api/update-campain-status", {
@@ -16,6 +17,14 @@ function updateCampainStatus(campain_data_to_update){
     console.log("updateCampainStatus: ", response)
   });
 }
+
+self.addEventListener("install", (e) => {
+  self.skipWaiting();
+});
+
+self.addEventListener("activate", (e) => {
+  console.log("Webpushr Service Worker is Activated!");
+});
 
 var notificationClicked = 0;
 self.addEventListener('push', function (event) {

@@ -76,12 +76,32 @@
                         else {
                             // have to do work here, if cache history cleared and end points not found
                             var web_push_registered = JSON.parse(localStorage.getItem("webPushRegistered"));
+                            console.log("web_push_registered: ", web_push_registered)
                             if(!web_push_registered){
-                                publicMethods.subscribeUserToPush();
+                                console.log("not found web push registered")
+                                
+                                return navigator.serviceWorker.register("service-worker.js")
+                                .then(function(registration) {
+                                    console.log("registration: ", registration)
+                                    registration.pushManager.getSubscription().then(function(subscription) {
+                                        console.log("subscription: ", subscription)
+                                        if(subscription){
+                                            console.log("subscription going to reset")
+                                            subscription.unsubscribe().then(function(successful) {
+                                                console.log("You've successfully unsubscribed: ", successful)
+                                                return publicMethods.subscribeUserToPush();
+                                            }).catch(function(e) {
+                                                console.log("Unsubscription failed:" , e)
+                                            })
+                                        }
+                                        else{
+                                            console.log("subscription not found, going to subscribe again");
+                                            return publicMethods.subscribeUserToPush();
+                                        }
+                                    })
+                                })
                             }
-                            else{
-                                console.log("not need to take any action on this now");
-                            }
+                            console.log("not need to take any action on this now");
                         }
                     }
                     // return result.state;
@@ -163,19 +183,21 @@
             });
         },
         subscribeUserToPush: function() {
+            console.log("call subscribeUserToPush")
             return navigator.serviceWorker.register("service-worker.js")
             .then(function(registration) {
+                console.log("registration: ", registration)
                 const subscribeOptions = {
                     userVisibleOnly: true,
                     applicationServerKey: publicMethods.urlBase64ToUint8Array(_.projectId)
                 };
-                return registration.pushManager.subscribe(subscribeOptions);
+                return registration.pushManager.subscribe(subscribeOptions);             
             })
             .then(function(pushSubscription) {
-                console.log('Received PushSubscription: ', pushSubscription);
+                // console.log('Received PushSubscription: ', pushSubscription);
                 publicMethods.sendSubscriptionToBackEnd(JSON.stringify(pushSubscription));
 
-                let web_push_registered = JSON.stringify({'action': 'activated'});
+                let web_push_registered = JSON.stringify({'action': 'activated', 'webPusherEndPoint': pushSubscription.endpoint});
                 localStorage.setItem("webPushRegistered", web_push_registered);
                 return pushSubscription;
             });
@@ -195,11 +217,10 @@
             return outputArray;
         },
         sendSubscriptionToBackEnd: function(subscription) {
-            console.log("call sendSubscriptionToBackEnd: ", subscription);
             subscription = JSON.parse(subscription);
             subscription['site_key'] = _.projectId;
 
-            console.log("obj new: ", JSON.stringify(subscription));
+            // console.log("obj new: ", JSON.stringify(subscription));
             // return fetch("http://localhost/webpushr/api/save-subscription", {
             return fetch("https://www.browserpushnotifications.com/api/save-subscription", {
                 method: 'POST',
