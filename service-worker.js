@@ -4,7 +4,6 @@ function updateCampainStatus(campain_data_to_update){
   // return fetch("http://localhost/webpushr/api/update-campain-status", {
   return fetch("https://www.browserpushnotifications.com/api/update-campain-status", {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
     body: campain_data_to_update
   })
   .then(function(response) {
@@ -22,9 +21,6 @@ self.addEventListener("install", (e) => {
   self.skipWaiting();
 });
 
-self.addEventListener("activate", (e) => {
-  console.log("Webpushr Service Worker is Activated!");
-});
 
 var notificationClicked = 0;
 self.addEventListener('push', function (event) {

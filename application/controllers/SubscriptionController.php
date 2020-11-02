@@ -5,10 +5,11 @@ require FCPATH . 'vendor/autoload.php';
 use Minishlink\WebPush\WebPush;
 use Minishlink\WebPush\Subscription;
 
+
 class SubscriptionController extends CI_Controller {
 
 	public function __construct(){
-        parent::__construct();
+		parent::__construct();
         $this->load->model('Subscription_modal');
 	}
 	
@@ -19,8 +20,14 @@ class SubscriptionController extends CI_Controller {
 
     public function save() {
 		// POST data
-		$postData = json_decode(trim(file_get_contents('php://input')), true); //$this->input->post('endpoint');
-		$data = $this->Subscription_modal->saveSubscription($postData['subscription'], $postData['site_key']);
+		// $stream_clean = $this->security->xss_clean($this->input->raw_input_stream);
+		// $request = json_decode($stream_clean);
+		// echo "request: "; print_r($request);
+
+		$post_data = json_decode(trim(file_get_contents('php://input')), true);
+		// echo "data: "; print_r($post_data['subscription']); return;
+		$data = $this->Subscription_modal->saveSubscription($post_data['subscription'], $post_data['site_key']);
+		// echo "data result: "; print_r($data); return;
 		if($data){
 			echo json_encode(array('status' => 'TRUE', 'message' => 'Subscription saved'));
 		}

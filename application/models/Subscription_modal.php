@@ -6,22 +6,35 @@ class Subscription_modal extends CI_Model{
         $site_detail = $this->db->select("*")->from("sites")->where(['public_key' => $public_key])->get();
         $site_detail = $site_detail->result();
         $site_id = $site_detail[0]->id;
-
+        
         $endpoint = $postData['endpoint'];
-		$expirationTime = isset($postData['expirationTime']) ? $postData['expirationTime'] : '';
+		$expirationTime = isset($postData['expirationTime']) ? $postData['expirationTime'] : "";
 		$keys = $postData['keys'];
 		$p256dh = $keys['p256dh'];
         $auth = $keys['auth'];
         
-        $data_to_save = [
+        $data_to_save = array (
             'site_id' => $site_id,
             'endpoint' => $endpoint,
-            'expirationTime' => $expirationTime,
+            'expirationTime' => "",
             'p256dh' => $p256dh,
             'auth' => $auth
-        ];
+        );
 
+        // $data_to_save_manually =  array ( 
+        //     'site_id' => 4,
+        //     'endpoint' => 'https://fcm.googleapis.com/fcm/send/eXYBnTRhv9o:APA91bFWInY0-YW6B_FEcKNd-jJdarAiJFNFBS88CDWEq_gwS6E7rT64YwP2KhRWQ4XQOWJPrkl7FZSRGZkYsQi6OVAImkxFiY0ioq_kP6ojwLyW9dOP_H3vWq4exQQpmpf2ayJVkdY5',
+        //     'expirationTime' => '',
+        //     'p256dh' => 'BEqhGPa5uqkNep2QoIEs3vyShsParHdEpMB5MnqGdzGVRTj_htxjBSCWykMjmgKHzRybT5b9HNVklKpfuacYX6Y',
+        //     'auth' => 'WEnfgh5IXL_dpcIv2_ioJQ'
+        // );
+
+        // echo "data_to_save: "; print_r($data_to_save); 
+        // echo "<br> data_to_save_manually: " ; print_r($data_to_save_manually);
+        // return $data_to_save;
+        // $result =  $this->db->insert_string('subscriptions', $data_to_save);
         $result =  $this->db->insert('subscriptions', $data_to_save);
+        // return $result;
         if($result){
             return true;
         }

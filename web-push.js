@@ -116,9 +116,10 @@
             // return fetch("http://localhost/webpushr/api/custom-prompt", {
             return fetch("https://www.browserpushnotifications.com/api/custom-prompt", {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                // headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({site_key: _.projectId})
             })
+            // return fetch("https://www.browserpushnotifications.com/api/custom-prompt?site_key="+ _.projectId)
             .then(function(response) {
                 if (!response.ok) {
                     console.log(new Error('Bad status code from server.'));
@@ -216,15 +217,14 @@
             }
             return outputArray;
         },
-        sendSubscriptionToBackEnd: function(subscription) {
+        sendSubscriptionToBackEnd: async function(subscription) {
             subscription = JSON.parse(subscription);
             subscription['site_key'] = _.projectId;
-
-            // console.log("obj new: ", JSON.stringify(subscription));
+            console.log("obj new: ", JSON.stringify(subscription));
             // return fetch("http://localhost/webpushr/api/save-subscription", {
             return fetch("https://www.browserpushnotifications.com/api/save-subscription", {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                // headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({subscription: subscription, site_key: _.projectId})
             })
             .then(function(response) {

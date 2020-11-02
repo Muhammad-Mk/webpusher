@@ -1,6 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
+
 class CustomPromptController extends CI_Controller {
 
 	public function __construct(){
@@ -21,18 +22,28 @@ class CustomPromptController extends CI_Controller {
         $this->load->view('custom-prompts/add', $data);
     }
 
+    public function url_match($site_url, $requested_server_url){
+        $site_url = (strpos($site_url, 'https://www.') !== false) ? str_replace("https://www.","",$site_url) : str_replace("https://","",$site_url);
+        $requested_server_url = (strpos($requested_server_url, 'https://www.') !== false) ? str_replace("https://www.","",$requested_server_url) : str_replace("https://","",$requested_server_url);
+        
+        // echo "==> site url: " . $site_url . ", requested_server_url: " . $requested_server_url . "<br><br>";
+
+        if($site_url != $requested_server_url){
+            return false;
+        }
+        return true;
+    }
+    
     public function postCustomPromptDetail(){
         $post_data = json_decode(trim(file_get_contents('php://input')), true);
+        // print_r($post_data); echo "here"; return;
         $custom_prompt_of_site = $this->CustomPrompt_modal->getCustomPromptDetailAgainstSiteKey($post_data['site_key']);
-        // print_r($custom_prompt_of_site);return;
         if(!$custom_prompt_of_site){
-            echo json_encode(array('status' => FALSE, 'message' => 'Custom prompt Detail bot found against that Key'));
+            echo json_encode(array('status' => FALSE, 'message' => 'Custom prompt Detail not found against that Key'));
             return;
         }
 
-        $site_url = $custom_prompt_of_site[0]->site_url;
-        // echo "site url: " . $site_url . ", server: " . $_SERVER['HTTP_REFERER'] . "<br>"; return;
-        if($site_url != $_SERVER['HTTP_REFERER']){
+        if(!$this->url_match($custom_prompt_of_site[0]->site_url, $_SERVER['HTTP_REFERER'])){
             echo json_encode(array('status' => FALSE, 'message' => 'Script not relevant to that site. Please use appropirate script'));
             return;
         }

@@ -1,7 +1,9 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
+
 require FCPATH . 'vendor/autoload.php';
 use Minishlink\WebPush\VAPID;
+
 
 class SiteRegistrationController extends CI_Controller {
 
