@@ -23,6 +23,7 @@
                         <td><?= $site->site_url ?></td>
                         <td><?= substr($site->public_key, 0, 30) . "....." ?></td>
                         <td style="display: flex;">
+                            <a href="<?= base_url() . "sites/detail/" . $site->id ?>" class="btn btn-sm btn-success m-1"><i class="fa fa-ellipsis-h"></i></a>
                             <a href="<?= base_url() . "subscriptions/" . $site->id ?>" class="btn btn-sm btn-success m-1"><i class="fa fa-exclamation"></i></a>
                             <a href="<?= base_url() . "custom-prompt/id/" . $site->id ?>" class="btn btn-sm btn-primary m-1"><i class="fa fa-plus"></i></a>
                             <a href="<?= base_url() . "sites/edit/" . $site->id ?>" class="btn btn-sm btn-warning m-1"><i class="fa fa-edit"></i></a>

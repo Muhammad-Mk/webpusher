@@ -62,6 +62,7 @@ $route['api/update-campain-status'] = 'SubscriptionController/updateSubscription
 
 
 $route['sites'] = 'SiteRegistrationController/getAllSites';
+$route['sites/detail/(:any)'] = 'SiteRegistrationController/getSiteDetail/$1';
 $route['sites/create'] = 'SiteRegistrationController/getCreateSite';
 $route['sites/edit'] = 'SiteRegistrationController/getEditSite';
 $route['sites/save'] = 'SiteRegistrationController/postSaveSite';

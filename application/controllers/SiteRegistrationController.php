@@ -18,6 +18,12 @@ class SiteRegistrationController extends CI_Controller {
         $this->load->view('sites/index', ['sites' => $sites]);
     }
 
+    public function getSiteDetail($site_id){
+        $site_detail = $this->SiteRegistration_modal->getSpecificSiteDetail($site_id);
+        $webpushr_url = base_url() . "web-push.js";
+        $this->load->view('sites/detail', ['site_detail' => $site_detail[0], 'webpushr_url' => $webpushr_url]);
+    }
+
     public function getCreateSite(){
         $this->load->view('sites/add');
     }

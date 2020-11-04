@@ -32,7 +32,7 @@ class SiteRegistration_modal extends CI_Model{
     }
 
     public function getSpecificSiteDetail($site_id){
-        $site_detail = $this->db->select("*")->from("sites")->where('id', $subscription_id)->get();        
+        $site_detail = $this->db->select("*")->from("sites")->where('id', $site_id)->get();        
         return $site_detail->result();
     }
 
