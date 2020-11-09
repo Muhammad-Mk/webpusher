@@ -22,17 +22,6 @@ class CustomPromptController extends CI_Controller {
         $this->load->view('custom-prompts/add', $data);
     }
 
-    public function url_match($site_url, $requested_server_url){
-        $site_url = (strpos($site_url, 'https://www.') !== false) ? str_replace("https://www.","",$site_url) : str_replace("https://","",$site_url);
-        $requested_server_url = (strpos($requested_server_url, 'https://www.') !== false) ? str_replace("https://www.","",$requested_server_url) : str_replace("https://","",$requested_server_url);
-        
-        // echo "==> site url: " . $site_url . ", requested_server_url: " . $requested_server_url . "<br><br>";
-
-        if($site_url != $requested_server_url){
-            return false;
-        }
-        return true;
-    }
     
     public function postCustomPromptDetail(){
         $post_data = json_decode(trim(file_get_contents('php://input')), true);
@@ -43,7 +32,7 @@ class CustomPromptController extends CI_Controller {
             return;
         }
 
-        if(!$this->url_match($custom_prompt_of_site[0]->site_url, $_SERVER['HTTP_REFERER'])){
+        if(!url_match($custom_prompt_of_site[0]->site_url, $_SERVER['HTTP_REFERER'])){
             echo json_encode(array('status' => FALSE, 'message' => 'Script not relevant to that site. Please use appropirate script'));
             return;
         }
